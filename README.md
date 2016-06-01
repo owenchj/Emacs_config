@@ -1,14 +1,13 @@
 # emacs_config emacs-24
-Using emacs more powerful for someone who is interested in the 'emacs' life.
+Using emacs more powerful for someone who is interested in the 'emacs' life.<br />
 
-Add neotree support ---- binding to F8
-Thanks to https://github.com/jaypei/emacs-neotree
+Add neotree support ---- binding to F8<br />
+Thanks to https://github.com/jaypei/emacs-neotree<br />
 
-Add auto-complete
-Thanks to https://github.com/auto-complete/auto-complete
+Add auto-complete <br />
+Thanks to https://github.com/auto-complete/auto-complete <br />
 
-Open delete white space    auto
-Open indent indentation    C-x tab
-Open line number           auto
-Using sublim theme         auto
-
+Open delete white space    auto <br />
+Open indent indentation    C-x tab <br />
+Open line number           auto <br />
+Using sublime theme         auto <br />
