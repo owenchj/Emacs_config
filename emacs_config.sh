@@ -1,14 +1,8 @@
 #! /bin/sh
+#Author : jie chen
+#Date   : 06/06/2016
+#Email  : owenchj@gmail.com
 
-#IFS='
-# Test:
-# pathfind PATH $(awk 'BEGIN { while(n<150) printf("x.%d ", ++n)  }' )A
-# pathfind -a PATH c88 cad icc c99 gcc c++ cc g++ >foo.out 2>foo.err
-
-
-OLDPATH="$PATH"
-PATH=/bin:/usr/bin
-export PATH
 
 error () {
     echo "$@" 1>&2
@@ -16,7 +10,9 @@ error () {
 }
 
 usage () {
-    echo "Usage: $PROGRAM [--all]  [--?]  [--help]  [--version] [-d] [install path]"
+    echo "Usage: $PROGRAM [--all]  [--help]  [--version] [--d] [install path]"
+    echo "Example: $PROGRAM --all --d ~/.emacs.dir"
+
 }
 
 usage_and_exit () {
@@ -38,6 +34,12 @@ all=no
 EXITCODE=0
 PROGRAM=`basename "$0"`
 VERSION=1.0
+DES="$HOME/.emacs.config"
+
+if [ $# == 0 ]
+then
+    error "No argument"
+fi
 
 while test "$#" -gt 0
 do
@@ -53,8 +55,8 @@ do
 	    version
 	    exit 0
 	    ;;
-	-d )
-	    DES="$2"
+	--d | -d)
+	    DES="$2/.emacs.config"
 	    shift
 	    if [ -z "$DES" ]
 	    then
@@ -72,47 +74,65 @@ do
     shift
 done
 
-if [ -z "$DES" ]
-then
-    DES="~/"
-fi
-
 command -v git >/dev/null 2>&1 ||
 {
-    echo "Check no git, install git ++++"
+    echo -e "\e[0;31mCheck no git, install git\e[0m"
     sudo apt-get install git-all
 }
 
 if [ "$all" == 'yes' ]
 then
-    config_dir=$DES/.emacs.config
-    #echo $config_dir
-    mkdir $config_dir
-    cd $config_dir
-
-    echo "[--Download neotree--]"
-    git clone git@github.com:jaypei/emacs-neotree.git
-
-    echo "[--Download neotree--]"
-    git clone git@github.com:jaypei/emacs-neotree.git
-    echo "[--Download auto-complete--]"
-    git clone git@github.com:auto-complete/auto-complete.git
-
-    #
-    echo "[--Install neotree--]"
-    file="`pwd`/.emacs.el"
-    echo $file
-    if [ -f "$file" ]
+    if [ ! -d "$DES" ]
+    then
+	echo "Destination does not exist, create (yes/no)?"
+	read input
+	if [ "$input" == "y" -o "$input" == "yes" ]
 	then
-	cp -rf $file ~/
+	    echo "create $DES"
+	    mkdir -p "$DES"
+	else
+	    exit 0;
+	fi
     fi
 
-    #
-    echo "[--Install auto-complete--]"
-    ac_dir="`pwd`/auto-complete"
-    install_dir="`pwd`/.auto" && mkdir $install_dir
-    echo $install_dir
-    #cd $ac_dir && make install DIR="$install_dir"
+    config_dir="$DES"
+
+    echo -e "\e[0;33m[Download neotree]\e[0m"
+    git clone git@github.com:jaypei/emacs-neotree.git
+
+    echo -e "\e[0;33mDownload auto-complete\e[0m"
+    tar -xjf auto-complete-1.3.1.tar.bz2
+
+
+    echo -e "\e[0;33mInstall neotree\e[0m"
+    mv "`pwd`/emacs-neotree" "$config_dir"
+
+    echo ";;neotree" >> .emacs.el
+    echo "(add-to-list 'load-path \""$config_dir/emacs-neotree"\")" >> .emacs.el
+    echo "(require 'neotree)" >> .emacs.el
+    echo "(global-set-key [f8] 'neotree-toggle)" >> .emacs.el
+
+    echo -e "\e[0;33mInstall auto-complete\e[0m"
+    ac_dir="`pwd`/auto-complete-1.3.1"
+    install_dir="$config_dir/.auto"
+    mkdir -p $install_dir
+    cd $ac_dir
+    make install DIR="$install_dir"
+
+    cd -
+    echo ";;auto-complete" >> .emacs.el
+    echo "(add-to-list 'load-path \""$install_dir"\")" >> .emacs.el
+    echo "(require 'auto-complete-config)" >> .emacs.el
+    echo "(add-to-list 'ac-dictionary-directories \""$install_dir/ac-dict"\")" >> .emacs.el
+    echo "(ac-config-default)" >> .emacs.el
+
+    file="`pwd`/.emacs.el"
+    if [ -f "$file" ]
+    then
+	echo "copy .emacs.el"
+	cp -rf $file "$HOME"
+    fi
+
 fi
 
 test $EXITCODE -gt 125 && EXITCODE=125

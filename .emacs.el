@@ -5406,18 +5406,6 @@ Also affects 'linum-mode' background."
 
 ;;; monokai-theme.el ends here
 
-
-
-
-
-
-
-;; .emacs auto-complete
-(add-to-list 'load-path "~/.emacs.config/.auto")
-(require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "~/.emacs.config/.auto/ac-dict")
-(ac-config-default)
-
 ;; five mode for todo list
 ;; (setq org-todo-keywords
 ;;      '((sequence "TODO" "DOING" "HANGUP" "|" "DONE" "CANCEL")))
@@ -5472,10 +5460,6 @@ Also affects 'linum-mode' background."
 ;; Auto delete white space before close
 (add-hook 'before-save-hook 'whitespace-cleanup)
 
-(add-to-list 'load-path "~/.emacs.config/emacs-neotree")
-(require 'neotree)
-(global-set-key [f8] 'neotree-toggle)
-
 ;; Line number
 (global-linum-mode t)
 
@@ -5493,3 +5477,4 @@ Also affects 'linum-mode' background."
 	    (local-set-key (kbd "C-c <up>")    'hs-hide-all)
 	    (local-set-key (kbd "C-c <down>")  'hs-show-all)
 	    (hs-minor-mode t)))
+;;Others
