@@ -1,4 +1,4 @@
-# emacs_config emacs-24
+# emacs_config emacs-24 Ubuntu
 Using emacs more powerful for someone who is interested in the 'emacs' life.<br />
 
 Add neotree support ---- binding to F8<br />
