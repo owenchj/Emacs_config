@@ -5478,3 +5478,39 @@ Also affects 'linum-mode' background."
 	    (local-set-key (kbd "C-c <down>")  'hs-show-all)
 	    (hs-minor-mode t)))
 ;;Others
+
+(global-set-key (kbd "C-x <up>") 'windmove-up)
+(global-set-key (kbd "C-x <down>") 'windmove-down)
+(global-set-key (kbd "C-x <left>") 'windmove-left)
+(global-set-key (kbd "C-x <right>") 'windmove-right)
+
+;; example of binding key
+(global-set-key (kbd "<f6>") (lambda () (interactive) (split-window-right) (shell) ))
+
+(defun my-run-some-commands ()
+  "Run `split-window-right' and `shell' in sequence."
+  (interactive)
+  (split-window-right)
+  (shell))
+(global-set-key (kbd "C-c a b c") 'my-run-some-commands)
+
+;;This snippet (goes into your .emacs customization file) will temporarily
+;;make Emacs believes that there is no active process when you kill it,
+;; and therefore you won't get the annoying prompt.
+(defadvice save-buffers-kill-emacs (around no-query-kill-emacs activate)
+  "Prevent annoying \"Active processes exist\" query when you quit Emacs."
+  (flet ((process-list ())) ad-do-it))
+
+;;;; ------------------------------------------------------------------------
+;;;; --- ws-trim.el - [1.3] ftp://ftp.lysator.liu.se/pub/emacs/ws-trim.el
+;;;; ------------------------------------------------------------------------
+(require 'ws-trim)
+;; (global-ws-trim-mode t)
+;; (set-default 'ws-trim-level 2)
+;;(setq ws-trim-global-modes '(guess (not message-mode eshell-mode)))
+(add-hook 'emacs-lisp-mode-hook 'turn-on-ws-trim)
+
+(defun tf-toggle-show-trailing-whitespace ()
+  "Toggle show-trailing-whitespace between t and nil"
+  (interactive)
+  (setq show-trailing-whitespace (not show-trailing-whitespace)))

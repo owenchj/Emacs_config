@@ -132,7 +132,9 @@ then
 	echo "copy .emacs.el"
 	cp -rf $file "$HOME"
     fi
-
+    
+    file="`pwd`/ws-trim.el"
+    cp -rf $file "$install_dir"
 fi
 
 test $EXITCODE -gt 125 && EXITCODE=125
