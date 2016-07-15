@@ -5449,10 +5449,31 @@ Also affects 'linum-mode' background."
 ;;      tab-width 4
 ;;      indent-tabs-mode t)
 
- (setq c-default-style
-     '((java-mode . "java")
-	(awk-mode . "awk")
-	(other . "k&r")))
+(defun my-c-lineup-inclass (langelem)
+  (let ((inclass (assoc 'inclass c-syntactic-context)))
+    (save-excursion
+      (goto-char (c-langelem-pos inclass))
+      (if (or (looking-at "struct")
+	      (looking-at "typedef struct"))
+	  '+
+	'++))))
+
+(c-add-style "microsoft"
+	     '("stroustrup"
+	       (c-offsets-alist
+		(access-lable . -)
+		(inclass      . my-c-lineup-inclass)
+		(innamespace . -)
+		(inline-open . 0)
+		(inher-cont . c-lineup-multi-inher)
+		(arglist-cont-nonempty . +)
+		(template-args-cont . +))))
+(setq c-default-style "microsoft")
+
+ ;; (setq c-default-style
+ ;;     '((java-mode . "java")
+ ;; 	(awk-mode . "awk")
+ ;; 	(other . "k&r")))
 
 ;; (c-set-offset (quote cpp-macro) 0 nil)
 (set-language-environment 'Chinese-GBK)
@@ -5514,3 +5535,10 @@ Also affects 'linum-mode' background."
   "Toggle show-trailing-whitespace between t and nil"
   (interactive)
   (setq show-trailing-whitespace (not show-trailing-whitespace)))
+
+(electric-pair-mode 1)
+;; make electric-pair-mode work on more brackets
+(setq electric-pair-pairs '(
+                            (?\" . ?\")
+                            (?\{ . ?\})
+                            ) )
