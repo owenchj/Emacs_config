@@ -1,0 +1,4 @@
+[commit]
+        template = ~/.gitmessage
+[diff]
+        external = /home/jchen/.diff
