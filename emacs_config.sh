@@ -44,32 +44,32 @@ fi
 while test "$#" -gt 0
 do
     case $1 in
-	--all | --al | --a | -all | -al |-a)
-	all=yes
-	;;
-	--help | --hel | --he | --h | '--?' | -help | -hel | -he | -h | '-?')
-	    usage_and_exit 0
-	    ;;
-	--version | --versio | --versi | --vers | --ver | --ve | --v | \
-	    -version |  -versio |  -vsrsi |  -vers |  -ver |  -ve |  -v )
-	    version
-	    exit 0
-	    ;;
-	--d | -d)
-	    DES="$2/.emacs.config"
-	    shift
-	    if [ -z "$DES" ]
-	    then
-		echo "Please provide valid install path!"
-		usage_and_exit 0
-	    fi
-	    ;;
-	-*)
-	    error "Unrecognized option: $1 "
-	    ;;
-	*)
-	    break
-	    ;;
+        --all | --al | --a | -all | -al |-a)
+        all=yes
+        ;;
+        --help | --hel | --he | --h | '--?' | -help | -hel | -he | -h | '-?')
+            usage_and_exit 0
+            ;;
+        --version | --versio | --versi | --vers | --ver | --ve | --v | \
+            -version |  -versio |  -vsrsi |  -vers |  -ver |  -ve |  -v )
+            version
+            exit 0
+            ;;
+        --d | -d)
+            DES="$2/.emacs.config"
+            shift
+            if [ -z "$DES" ]
+            then
+                echo "Please provide valid install path!"
+                usage_and_exit 0
+            fi
+            ;;
+        -*)
+            error "Unrecognized option: $1 "
+            ;;
+        *)
+            break
+            ;;
     esac
     shift
 done
@@ -84,15 +84,15 @@ if [ "$all" == 'yes' ]
 then
     if [ ! -d "$DES" ]
     then
-	echo "Destination does not exist, create (yes/no)?"
-	read input
-	if [ "$input" == "y" -o "$input" == "yes" ]
-	then
-	    echo "create $DES"
-	    mkdir -p "$DES"
-	else
-	    exit 0;
-	fi
+        echo "Destination does not exist, create (yes/no)?"
+        read input
+        if [ "$input" == "y" -o "$input" == "yes" ]
+        then
+            echo "create $DES"
+            mkdir -p "$DES"
+        else
+            exit 0;
+        fi
     fi
 
     config_dir="$DES"
@@ -129,11 +129,14 @@ then
     file="`pwd`/.emacs.el"
     if [ -f "$file" ]
     then
-	echo "copy .emacs.el"
-	cp -rf $file "$HOME"
+        echo "copy .emacs.el"
+        cp -rf $file "$HOME"
     fi
-    
+
     file="`pwd`/ws-trim.el"
+    cp -rf $file "$install_dir"
+
+    file="`pwd`/clean-aindent-mode.el"
     cp -rf $file "$install_dir"
 fi
 
