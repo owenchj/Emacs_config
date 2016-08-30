@@ -5449,37 +5449,37 @@ Also affects 'linum-mode' background."
 ;;      tab-width 4
 ;;      indent-tabs-mode t)
 
-(defun my-c-lineup-inclass (langelem)
-  (let ((inclass (assoc 'inclass c-syntactic-context)))
-    (save-excursion
-      (goto-char (c-langelem-pos inclass))
-      (if (or (looking-at "struct")
-	      (looking-at "typedef struct"))
-	  '+
-	'++))))
+;; (defun my-c-lineup-inclass (langelem)
+;;   (let ((inclass (assoc 'inclass c-syntactic-context)))
+;;   (save-excursion
+;;     (goto-char (c-langelem-pos inclass))
+;;     (if (or (looking-at "struct")
+;; 	    (looking-at "typedef struct"))
+;; 	'+
+;;       '++))))
 
-(c-add-style "microsoft"
-	     '("stroustrup"
-	       (c-offsets-alist
-		(access-lable . -)
-		(inclass      . my-c-lineup-inclass)
-		(innamespace . -)
-		(inline-open . 0)
-		(inher-cont . c-lineup-multi-inher)
-		(arglist-cont-nonempty . +)
-		(template-args-cont . +))))
-(setq c-default-style "microsoft")
+;;  (c-add-style "microsoft"
+;;               '("stroustrup"
+;;  		(c-offsets-alist
+;;  		 (access-lable . -)
+;;  		 (inclass      . my-c-lineup-inclass)
+;;                  (innamespace . -)
+;;                  (inline-open . 0)
+;;                  (inher-cont . c-lineup-multi-inher)
+;;                  (arglist-cont-nonempty . +)
+;;                  (template-args-cont . +))))
+;;  (setq c-default-style "microsoft")
 
- ;; (setq c-default-style
- ;;     '((java-mode . "java")
- ;; 	(awk-mode . "awk")
- ;; 	(other . "k&r")))
+(setq c-default-style
+      '((java-mode . "java")
+ 	(awk-mode . "awk")
+ 	(other . "k&r")))
 
 ;; (c-set-offset (quote cpp-macro) 0 nil)
 (set-language-environment 'Chinese-GBK)
 
 ;; Auto delete white space before close
-(add-hook 'before-save-hook 'whitespace-cleanup)
+;; (add-hook 'before-save-hook 'whitespace-cleanup)
 
 ;; Line number
 (global-linum-mode t)
@@ -5505,6 +5505,9 @@ Also affects 'linum-mode' background."
 (global-set-key (kbd "C-x <left>") 'windmove-left)
 (global-set-key (kbd "C-x <right>") 'windmove-right)
 
+(require 'ws-trim)
+(add-hook 'emacs-lisp-mode-hook 'turn-on-ws-trim)
+
 ;; example of binding key
 (global-set-key (kbd "<f6>") (lambda () (interactive) (split-window-right) (shell) ))
 
@@ -5522,23 +5525,64 @@ Also affects 'linum-mode' background."
   "Prevent annoying \"Active processes exist\" query when you quit Emacs."
   (flet ((process-list ())) ad-do-it))
 
-;;;; ------------------------------------------------------------------------
-;;;; --- ws-trim.el - [1.3] ftp://ftp.lysator.liu.se/pub/emacs/ws-trim.el
-;;;; ------------------------------------------------------------------------
-(require 'ws-trim)
-;; (global-ws-trim-mode t)
-;; (set-default 'ws-trim-level 2)
-;;(setq ws-trim-global-modes '(guess (not message-mode eshell-mode)))
-(add-hook 'emacs-lisp-mode-hook 'turn-on-ws-trim)
+;; ;; auto pair
+;; (defun autopair-insert-opening ()
+;;   (interactive)
+;;   (when (autopair-pair-p)
+;;     (setq autopair-action (list 'opening (autopair-find-pair) (point))))
+;;   (autopair-fallback))
 
-(defun tf-toggle-show-trailing-whitespace ()
-  "Toggle show-trailing-whitespace between t and nil"
-  (interactive)
-  (setq show-trailing-whitespace (not show-trailing-whitespace)))
+;; (electric-pair-mode 1)
+;; ;; make electric-pair-mode work on more brackets
+;; (setq electric-pair-pairs '(
+;;                             (?\" . ?\")
+;;                             (?\{ . ?\})
+;;                             ) )
 
-(electric-pair-mode 1)
-;; make electric-pair-mode work on more brackets
-(setq electric-pair-pairs '(
-                            (?\" . ?\")
-                            (?\{ . ?\})
-                            ) )
+;; Delete and highlight white space
+; make carriage returns blue and tabs green
+(custom-set-faces
+ '(my-carriage-return-face ((((class color)) (:background "blue"))) t)
+ '(my-tab-face ((((class color)) (:background "green"))) t)
+ )
+; add custom font locks to all buffers and all files
+(add-hook
+ 'font-lock-mode-hook
+ (function
+  (lambda ()
+    (setq
+     font-lock-keywords
+     (append
+      font-lock-keywords
+      '(
+        ("\r" (0 'my-carriage-return-face t))
+        ("\t" (0 'my-tab-face t))
+        ))))))
+
+; make characters after column 80 purple
+(setq whitespace-style
+  (quote (face trailing tab-mark lines-tail)))
+(add-hook 'find-file-hook 'whitespace-mode)
+
+; transform literal tabs into a right-pointing triangle
+(setq
+ whitespace-display-mappings ;http://ergoemacs.org/emacs/whitespace-mode.html
+ '(
+   (tab-mark 9 [9654 9] [92 9])
+   ;others substitutions...
+   ))
+
+(setq-default indent-tabs-mode nil)
+(require 'clean-aindent-mode)
+;; Auto delete white space before close
+;;(add-hook 'before-save-hook 'whitespace-cleanup)
+;;(global-set-key (kbd "C-x w") 'whitespace-cleanup)
+(global-set-key (kbd "C-x w") (lambda () (interactive) (whitespace-cleanup) (delete-trailing-whitespace)))
+(global-set-key (kbd "C-c a b c") (lambda () (interactive) (some-command) (some-other-command)))
+
+(defun create-tags (dir-name)
+     "Create tags file."
+     (interactive "DDirectory: ")
+     (eshell-command
+      (format "find %s -type f -name \"*.cpp\" -or -name \"*.hpp\" -or -name \"*.h\" -or -name \"*.c\" | etags -" dir-name)))
+
