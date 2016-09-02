@@ -134,10 +134,10 @@ then
     fi
 
     file="`pwd`/ws-trim.el"
-    cp -rf $file "$install_dir"
+    cp -rf $file "$config_dir"
 
     file="`pwd`/clean-aindent-mode.el"
-    cp -rf $file "$install_dir"
+    cp -rf $file "$config_dir"
 fi
 
 test $EXITCODE -gt 125 && EXITCODE=125
