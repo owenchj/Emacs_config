@@ -5558,12 +5558,14 @@ Also affects 'linum-mode' background."
       font-lock-keywords
       '(
         ("\r" (0 'my-carriage-return-face t))
-        ("\t" (0 'my-tab-face t))
+        ;;("\t" (0 'my-tab-face t))
         ))))))
 
 ; make characters after column 80 purple
 (setq whitespace-style
-  (quote (face trailing tab-mark lines-tail)))
+      (quote (face tabs trailing spaces tab-mark
+                   ;lines-tail
+                   )))
 (add-hook 'find-file-hook 'whitespace-mode)
 
 ; transform literal tabs into a right-pointing triangle
