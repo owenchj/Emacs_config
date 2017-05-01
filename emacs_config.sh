@@ -216,7 +216,7 @@ fi
 if [ -f "$EMACS_EL_COPY" ]
 then
     echo "copy .emacs.el"
-    mv -f $EMACS_EL_COPY "$HOME"
+    mv -f $EMACS_EL_COPY "$HOME/$EMACS_EL"
 fi
 
 test $EXITCODE -gt 125 && EXITCODE=125
